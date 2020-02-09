@@ -96,6 +96,8 @@ public Action CMD_ChangeMap(int client, int args) {
 stock bool findMapByCMD(char[] cmd, char[] map){
     char cmdMap[STR_LENGTH];
     strcopy(cmdMap, sizeof cmdMap -3, cmd);
+    TrimString(cmdMap);
+    ReplaceStringEx(cmdMap, sizeof cmdMap, "sm_", "", sizeof cmdMap, sizeof cmdMap, true);
     for(int i = 0; i < shortcuts.Length; i++){
         ArrayList ref = shortcuts.Get(i);
         char refName[STR_LENGTH];
