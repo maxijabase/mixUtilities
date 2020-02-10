@@ -26,13 +26,13 @@ public void OnPluginStart(){
 }
 
 stock void loadCFG() {
-    char buffer[STR_LENGTH], cgfPAth[STR_LENGTH];
+    char buffer[STR_LENGTH], cgfPath[STR_LENGTH];
     cvarCfgFile.GetString(buffer, sizeof(buffer));
-    BuildPath(Path_SM, cgfPAth, PLATFORM_MAX_PATH, buffer);
+    BuildPath(Path_SM, cgfPath, PLATFORM_MAX_PATH, buffer);
     kv_cfg = new KeyValues("mapShortcuts");
 
     kv_cfg.SetEscapeSequences(true);
-    kv_cfg.ImportFromFile(cgfPAth);
+    kv_cfg.ImportFromFile(cgfPath);
 
     shortcuts = new ArrayList(1);
 
