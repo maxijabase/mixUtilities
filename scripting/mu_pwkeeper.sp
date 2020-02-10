@@ -1,11 +1,16 @@
+/*
+
+to do:
+make chat messages customizable through CFG
+
+*/
 
 public Plugin myinfo =  {
-	name = "PW Keeper", 
+	name = "Mix Utilities - Password Keeper", 
 	author = "lugui", 
 	description = "Stores a server PW so you don't need to type it again.", 
 	version = "1.0", 
 };
-
 
 ConVar pw;
 char customPW[128];

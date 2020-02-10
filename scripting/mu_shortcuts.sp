@@ -1,3 +1,10 @@
+/*
+
+to do:
+nothing atm
+
+*/
+
 #include <sourcemod>
 #include <shortcuts>
 
