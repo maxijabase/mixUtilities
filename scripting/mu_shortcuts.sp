@@ -49,7 +49,7 @@ void BrowseKeyValues(KeyValues kv, char[] sectionName = "", int level = 0){
 		else{
 			if (kv.GetDataType(NULL_STRING) != KvData_None) {
                 kv.GetString(NULL_STRING, value, sizeof value);
-                PrintToServer("%d %s %s: %s", level, sectionName, section, value);
+                //PrintToServer("%d %s %s: %s", level, sectionName, section, value);
                 ArrayList ref = CreateArray(STR_LENGTH);
                 ref.PushString(section);
                 ref.PushString(value);
