@@ -23,7 +23,7 @@ public Plugin myinfo =
 	description = "Fetches actual name of aliasing players.", 
 	version = "1.0", 
 	url = "www.coldcommunity.com"
-} 
+}
 
 Database g_Database = null;
 bool g_Late = false;
@@ -401,4 +401,4 @@ public void SQL_ConnectDatabase(Database db, const char[] error, any data)
 		}
 	}
 	return;
-}
+} 
