@@ -1,6 +1,6 @@
 /*
 
-to do:
+TODO
 make chat messages customizable through CFG
 
 
@@ -37,7 +37,10 @@ public void OnPluginStart()
 	RegConsoleCmd("sm_whois_full", Command_Activity, "View names of a player");
 	RegAdminCmd("sm_thisis", Command_SetName, ADMFLAG_GENERIC, "Set name of a player");
 	LoadTranslations("common.phrases");
+	LoadTranslations("whois.phrases");
 }
+
+	
 
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max)
 {
@@ -69,12 +72,12 @@ public Action Command_SetName(int client, int args)
 {
 	if (g_Database == null) {
 		ThrowError("Database not connected");
-		CReplyToCommand(client, "{green}[WhoIs]{default} Error en la base de datos.");
+		CReplyToCommand(client, "%t", "databaseError");
 	}
 	
 	if (args != 2)
 	{
-		CReplyToCommand(client, "{green}[WhoIs]{default} Usage: sm_thisis <player> <name>");
+		CReplyToCommand(client, "%t", "thisisUsage");
 		return Plugin_Handled;
 	}
 	
@@ -86,7 +89,7 @@ public Action Command_SetName(int client, int args)
 	//Invalid Target:
 	if (target == -1)
 	{
-		CReplyToCommand(client, "{green}[WhoIs]{default} Jugador invalido: {green}%s{default}.", arg);
+		CReplyToCommand(client, "%t", "invalidPlayer", arg);
 		return Plugin_Handled;
 	}
 	
@@ -94,7 +97,7 @@ public Action Command_SetName(int client, int args)
 	char query[256]; Format(query, sizeof(query), "INSERT INTO whois_permname VALUES('%s', '%s') ON DUPLICATE KEY UPDATE name='%s';", steamid, name, name);
 	g_Database.Query(SQL_GenericQuery, query);
 	
-	CReplyToCommand(client, "{green}[WhoIs]{default} Al jugador %s se le atribuyó el nombre {green}%s{default}.", arg, arg2);
+	CReplyToCommand(client, "%t", "nameGiven", arg, arg2);
 	return Plugin_Handled;
 }
 
@@ -102,12 +105,12 @@ public Action Command_ShowName(int client, int args)
 {
 	if (g_Database == null) {
 		ThrowError("Database not connected");
-		CReplyToCommand(client, "{green}[WhoIs]{default} Error en la base de datos.");
+		CReplyToCommand(client, "%t", "databaseError");
 	}
 	
 	if (args != 1)
 	{
-		CReplyToCommand(client, "{green}[WhoIs]{default} Uso: sm_whois <jugador>");
+		CReplyToCommand(client, "%t", "whoisUsage");
 		return Plugin_Handled;
 	}
 	
@@ -117,7 +120,7 @@ public Action Command_ShowName(int client, int args)
 	//Invalid Target:
 	if (target == -1)
 	{
-		CReplyToCommand(client, "{green}[WhoIs]{default} Jugador invalido: {green}%s{default}.", arg);
+		CReplyToCommand(client, "%t", "invalidPlayer", arg);
 		return Plugin_Handled;
 	}
 	
@@ -153,7 +156,7 @@ public void SQL_SelectPermName(Database db, DBResultSet results, const char[] er
 	
 	if (!results.FetchRow())
 	{
-		CPrintToChat(client, "{green}[WhoIs]{default} %N no tiene un nombre asignado.", target);
+		CPrintToChat(client, "%t", "noName", target);
 		return;
 	}
 	
@@ -162,14 +165,14 @@ public void SQL_SelectPermName(Database db, DBResultSet results, const char[] er
 	
 	char name[128];
 	results.FetchString(nameCol, name, sizeof(name));
-	CPrintToChat(client, "{green}[WhoIs]{default} %N es {green}%s{default}.", target, name);
+	CPrintToChat(client, "%t", "thisIsPlayer", target, name);
 }
 
 public Action Command_Activity(int client, int args)
 {
 	if (g_Database == null) {
 		ThrowError("Database not connected");
-		CReplyToCommand(client, "{green}[WhoIs]{default} Error en la base de datos.");
+		CReplyToCommand(client, "%t", "databaseError");
 	}
 	
 	//variable args accepted:
@@ -180,12 +183,12 @@ public Action Command_Activity(int client, int args)
 		{
 			if (client == 0)
 			{
-				CReplyToCommand(client, "{green}[WhoIs]{default} Esta variante no puede ser ejecutada desde la consola.");
+				CReplyToCommand(client, "%t", "noConsole");
 				return Plugin_Handled;
 			}
 			
 			Menu menu = new Menu(Handler_ActivityList);
-			menu.SetTitle("Selecciona un jugador:");
+			menu.SetTitle("%t", "pickPlayer");
 			for (int i = 1; i <= MaxClients; i++)
 			{
 				if (!IsClientConnected(i) || !IsClientAuthorized(i) || IsFakeClient(i))continue;
@@ -207,7 +210,7 @@ public Action Command_Activity(int client, int args)
 			//Invalid Target:
 			if (target == -1)
 			{
-				CReplyToCommand(client, "{green}[WhoIs]{default} Jugador invalido: {green}%s{default}.", arg);
+				CReplyToCommand(client, "%t", "invalidPlayer", arg);
 				return Plugin_Handled;
 			}
 			
@@ -221,12 +224,12 @@ public Action Command_Activity(int client, int args)
 		{
 			if (client == 0)
 			{
-				CReplyToCommand(client, "{green}[WhoIs]{default} Esta variante no puede ser ejecutada desde la consola.");
+				CReplyToCommand(client, "%t", "noConsole");
 				return Plugin_Handled;
 			}
 			
 			Menu menu = new Menu(Handler_ActivityList);
-			menu.SetTitle("Selecciona un jugador:");
+			menu.SetTitle("%t", "pickPlayer");
 			for (int i = 1; i <= MaxClients; i++)
 			{
 				if (!IsClientConnected(i) || !IsClientAuthorized(i) || IsFakeClient(i))continue;

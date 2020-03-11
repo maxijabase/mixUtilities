@@ -47,9 +47,9 @@ public Action checkPlayers(Handle timer) {
 	
 	kv = new KeyValues("AutoMGE");
 	
-	if (clientCount == 0 && (!StrEqual(currentMap, "mge_chillypunch_final4_fix2"))) {
+	if (clientCount == 0 && (!StrEqual(currentMap, "mge_training_v8_beta4b"))) {
 		
-		ForceChangeLevel("mge_chillypunch_final4_fix2", "Server empty, switching to MGE...");
+		ForceChangeLevel("mge_training_v8_beta4b", "Server empty, switching to MGE...");
 		return Plugin_Handled;
 	}
 	return Plugin_Handled;
