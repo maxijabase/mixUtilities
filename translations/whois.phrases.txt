@@ -33,7 +33,7 @@
 		"en" "{green}[WhoIs]{default} {1} doesn't have an assigned name."
 		"pt" "{green}[WhoIs]{default} {1} não tem nome configurado."
 	}
-	"thisIs"
+	"thisIsPlayer"
 	{
 		"#format" "{1:N},{2:s}"
 		"es" "{green}[WhoIs]{default} {1} es {green}{2}{default}."
