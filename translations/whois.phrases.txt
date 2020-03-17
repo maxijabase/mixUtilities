@@ -6,11 +6,17 @@
 		"en" "{green}[WhoIs]{default} Failed to connect to the database."
 		"pt" "{green}[WhoIs]{default} Erro no banco de dados."
 	}
-	"commandUsage"
+	"thisisUsage"
 	{
 		"es" "{green}[WhoIs]{default} Uso: sm_thisis <jugador> <nombre>"
 		"en" "{green}[WhoIs]{default} Usage: sm_thisis <player> <name>"
 		"pt" "{green}[WhoIs]{default} Uso: sm_thisis <jogador> <nome>"
+	}
+	"whoisUsage"
+	{
+		"es" "{green}[WhoIs]{default} Uso: sm_whois <jugador>"
+		"en" "{green}[WhoIs]{default} Usage: sm_whois <player>"
+		"pt" "{green}[WhoIs]{default} Uso: sm_whois <jogador>"
 	}
 	"invalidPlayer"
 	{
@@ -21,14 +27,14 @@
 	}
 	"nameGiven"
 	{
-		"#format" "{1:N},{2:s}"
+		"#format" "{1:s},{2:s}"
 		"es" "{green}[WhoIs]{default} Al jugador {1} se le atribuyó el nombre {green}{2}{default}."
 		"en" "{green}[WhoIs]{default} Player {1} was given name {green}{2}{default}."
-		"pt" "{green}[WhoIs]{default} Ao jogador {1} foi dado nome {green}{2}{default}."
+		"pt" "{green}[WhoIs]{default} Ao jogador {1} foi dado o nome {green}{2}{default}."
 	}
 	"noName"
 	{
-		"#format" "{1:s}"
+		"#format" "{1:N}"
 		"es" "{green}[WhoIs]{default} {1} no tiene un nombre asignado."
 		"en" "{green}[WhoIs]{default} {1} doesn't have an assigned name."
 		"pt" "{green}[WhoIs]{default} {1} não tem nome configurado."
@@ -37,8 +43,8 @@
 	{
 		"#format" "{1:N},{2:s}"
 		"es" "{green}[WhoIs]{default} {1} es {green}{2}{default}."
-		"es" "{green}[WhoIs]{default} {1} is {green}{2}{default}."
-		"es" "{green}[WhoIs]{default} {1} é {green}{2}{default}."
+		"en" "{green}[WhoIs]{default} {1} is {green}{2}{default}."
+		"pt" "{green}[WhoIs]{default} {1} é {green}{2}{default}."
 	}
 	"noConsole"
 	{
@@ -51,5 +57,11 @@
 		"es" "Selecciona un jugador:"
 		"en" "Pick a player:"
 		"pt" "Escolha un jogador:"
+	}
+	"playerNameActivity"
+	{
+		"es" "Historial de Nombres"
+		"en" "Player Name Activity"
+		"pt" "Historial de Nomes"
 	}
 }

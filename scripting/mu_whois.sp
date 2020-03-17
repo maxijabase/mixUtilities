@@ -350,7 +350,7 @@ public void SQL_GetPlayerActivity(Database db, DBResultSet results, const char[]
 	
 	int count = 0;
 	Menu menu = new Menu(Handler_Nothing);
-	menu.SetTitle("Player Name Activity:");
+	menu.SetTitle("%t", "playerNameActivity");
 	
 	while (results.FetchRow())
 	{
