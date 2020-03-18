@@ -40,7 +40,7 @@ public void OnPluginStart()
 	LoadTranslations("whois.phrases");
 }
 
-	
+
 
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max)
 {

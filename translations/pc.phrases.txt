@@ -1,12 +1,12 @@
 "Phrases"
 {
-
+	
 	"players"
 	{
-		"#format" "{1:i}"
-		"es" "{green}[PC]{default} Hay {orange}{1}{default} personas en el servidor."
-		"en" "{green}[PC]{default} There are {orange}{1}{default} players in the server."
-		"pt" "{green}[PC]{default} Há {orange}{1}{default} jogadores no servidor."
+		"#format""{1:i}"
+		"es""{green}[PC]{default} Hay {orange}{1}{default} personas en el servidor."
+		"en""{green}[PC]{default} There are {orange}{1}{default} players in the server."
+		"pt""{green}[PC]{default} Há {orange}{1}{default} jogadores no servidor."
 	}
-
-}
+	
+} 
