@@ -16,3 +16,7 @@ A plugin designed to quickly identify aliasing players by giving them a permanen
 A quick way to reload the current map
 
 - sm_rm
+
+## AutoMGE (not developed)
+
+Will switch to specified MGE (or whatever) map if server is empty.
