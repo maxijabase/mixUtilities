@@ -13,10 +13,10 @@ make discord message customizable through CFG
 public Plugin myinfo = 
 {
 	name = "Discord API", 
-	author = "Bara & ratawar", 
-	description = "Legacy Hub's Discord in-game announcement plugin.", 
-	version = "2.1", 
-	url = "github.com/Bara20 - steamcommunity.com/profiles/76561198179807307"
+	author = "Bara - ampere", 
+	description = "Discord in-game announcement plugin.", 
+	version = "3.0", 
+	url = "github.com/Bara - legacyhub.xyz"
 };
 
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max)
@@ -29,11 +29,17 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 }
 
 bool g_permitir = true;
+Handle discordmix_role = INVALID_HANDLE;
+Handle discordmix_webhook = INVALID_HANDLE;
 
 public void OnPluginStart()
 {
 	
 	RegAdminCmd("sm_anunciar", CMD_Anuncio, ADMFLAG_GENERIC, "Anuncia al Discord qué se está por jugar en Legacy.");
+	LoadTranslations("discordmix.phrases");
+	
+	discordmix_role = CreateConVar("discordmix_role", "", "Role that will be pinged in the announcement");
+	discordmix_webhook = CreateConVar("discordmix_webhook", "", "Link to the Discord Webhook");
 	
 }
 
@@ -41,7 +47,7 @@ char GetGmtDate()
 {
 	int timestamp = GetTime();
 	
-	// Build sring
+	// Build string
 	char GMTTime[40];
 	FormatTime(GMTTime, sizeof(GMTTime), "%H:%M", timestamp);
 	
@@ -55,7 +61,7 @@ public Action CMD_Anuncio(int client, int args)
 	
 	if (g_permitir == false) {
 		
-		CPrintToChat(client, "{orange}[LH] {default}El mix/fake ya fue anunciado hace menos de 10 minutos. Por favor, esperá antes de anunciarlo nuevamente.");
+		CPrintToChat(client, "%t", "alreadyAnnounced");
 		return Plugin_Handled;
 	}
 	
@@ -66,7 +72,7 @@ public Action CMD_Anuncio(int client, int args)
 	
 	if ((StrContains(mapName, "cp_") == -1) && ((StrContains(mapName, "koth_")) == -1)) {
 		
-		CPrintToChat(client, "{orange}[LH] {default}Comando no permitido. Colocá un mapa de mix antes de anunciar.");
+		CPrintToChat(client, "%t", "notMixMap");
 		return Plugin_Handled;
 	}
 	
@@ -94,16 +100,18 @@ public Action CMD_Anuncio(int client, int args)
 	
 	if (!CheckType(type))
 	{
-		CPrintToChat(client, "{orange}[LH] {default}Uso de comando: sm_anunciar <mix/fake>.");
+		CPrintToChat(client, "%t", "usage");
 		return Plugin_Handled;
 	}
 	// se formatea el anuncio con "gameId" utilizado dentro del array gameType para determinar si el anuncio nombra un MIX o un FAKE
 	int gameId = 0;
 	
-	if (StrContains(type, "fake", false) != -1)
-		gameId = 1;
+	if (StrContains(type, "fake", false) != -1) {
+		gameId = 1; }
 	
-	Format(sMessage, sizeof(sMessage), "@everyone\n:joystick: **__%s en Legacy Hub__**\n:black_small_square: ``connect %s:%s; password %s``\n:black_small_square: steam://connect/%s:%s/%s\n:map: **%s** | :busts_in_silhouette: **%d/%d** | :clock3: **%s**", gameType[gameId], serverIp, serverPort, serverPassword, serverIp, serverPort, serverPassword, mapName, playerCount, MaxClients, GetGmtDate());
+	char role[64]; GetConVarString(discordmix_role, role, sizeof(role));
+	
+	Format(sMessage, sizeof(sMessage), "%s\n:joystick: **__%s__**\n:black_small_square: ``connect %s:%s; password %s``\n:black_small_square: steam://connect/%s:%s/%s\n:map: **%s** | :busts_in_silhouette: **%d/%d** | :clock3: **%s**", role, gameType[gameId], serverIp, serverPort, serverPassword, serverIp, serverPort, serverPassword, mapName, playerCount, MaxClients, GetGmtDate());
 	
 	// se bloquea temporalmente la repetición del comando, y comienza un timer que lo reactiva en 10 minutos
 	
@@ -121,7 +129,7 @@ public Action CMD_Anuncio(int client, int args)
 	
 	// confirmacion en chat a quien ejecutó el comando
 	
-	CPrintToChat(client, "{orange}[LH] {default}%s anunciado con éxito!", gameType[gameId]);
+	CPrintToChat(client, "%t", "announcedSuccessfully", gameType[gameId]);
 	
 	return Plugin_Continue;
 }
@@ -136,7 +144,6 @@ public Action permAnuncio(Handle timer, client) {
 	g_permitir = true;
 }
 
-//{
 public int Native_SendMessageToDiscord(Handle plugin, int numParams)
 {
 	char sChannel[64], sMessage[512];
@@ -148,20 +155,18 @@ public int Native_SendMessageToDiscord(Handle plugin, int numParams)
 
 public void SendToDiscord(const char[] channel, const char[] message)
 {
-	char sURL[512];
-	if (GetChannelWebHook(channel, sURL, sizeof(sURL)))
+	char sURL[512]; GetConVarString(discordmix_webhook, sURL, sizeof(sURL));
+	Handle request = SteamWorks_CreateHTTPRequest(k_EHTTPMethodPOST, sURL);
+	
+	SteamWorks_SetHTTPRequestGetOrPostParameter(request, "content", message);
+	SteamWorks_SetHTTPRequestHeaderValue(request, "Content-Type", "application/x-www-form-urlencoded");
+	
+	if (request == null || !SteamWorks_SetHTTPCallbacks(request, Callback_SendToDiscord) || !SteamWorks_SendHTTPRequest(request))
 	{
-		Handle request = SteamWorks_CreateHTTPRequest(k_EHTTPMethodPOST, sURL);
-		
-		SteamWorks_SetHTTPRequestGetOrPostParameter(request, "content", message);
-		SteamWorks_SetHTTPRequestHeaderValue(request, "Content-Type", "application/x-www-form-urlencoded");
-		
-		if (request == null || !SteamWorks_SetHTTPCallbacks(request, Callback_SendToDiscord) || !SteamWorks_SendHTTPRequest(request))
-		{
-			PrintToServer("[LH] Error en el envío del mensaje a Discord.");
-			delete request;
-		}
+		PrintToServer("Error en el envío del mensaje a Discord.");
+		delete request;
 	}
+	
 }
 
 public Callback_SendToDiscord(Handle hRequest, bool bFailure, bool bRequestSuccessful, EHTTPStatusCode eStatusCode)
@@ -170,7 +175,7 @@ public Callback_SendToDiscord(Handle hRequest, bool bFailure, bool bRequestSucce
 	{
 		if (eStatusCode != k_EHTTPStatusCode200OK && eStatusCode != k_EHTTPStatusCode204NoContent)
 		{
-			LogError("[LH] Error en callback. Código [%i].", eStatusCode);
+			LogError("Error en callback. Código [%i].", eStatusCode);
 			SteamWorks_GetHTTPResponseBodyCallback(hRequest, Callback_Response);
 		}
 	}
@@ -179,48 +184,5 @@ public Callback_SendToDiscord(Handle hRequest, bool bFailure, bool bRequestSucce
 
 public Callback_Response(const char[] sData)
 {
-	PrintToServer("[LH] Respuesta de callback [%s]", sData);
+	PrintToServer("Respuesta de callback [%s]", sData);
 }
-
-bool GetChannelWebHook(const char[] channel, char[] webhook, int length)
-{
-	KeyValues kv = new KeyValues("DiscordAPI");
-	
-	char sFile[PLATFORM_MAX_PATH + 1];
-	BuildPath(Path_SM, sFile, sizeof(sFile), "configs/discord.cfg");
-	
-	if (!FileExists(sFile))
-	{
-		SetFailState("[LH] \"%s\" no encontrado!", sFile);
-		return false;
-	}
-	
-	kv.ImportFromFile(sFile);
-	
-	if (!kv.GotoFirstSubKey())
-	{
-		SetFailState("[LH] Canal no encontrado en \"%s\"!", sFile);
-		delete kv;
-		return false;
-	}
-	
-	char sChannel[64];
-	
-	do
-	{
-		kv.GetSectionName(sChannel, sizeof(sChannel));
-		
-		if (StrEqual(sChannel, channel, false))
-		{
-			kv.GetString("url", webhook, length);
-			delete kv;
-			return true;
-		}
-	}
-	while (kv.GotoNextKey());
-	
-	delete kv;
-	
-	return false;
-}
-//}Discord API

@@ -17,6 +17,12 @@ A quick way to reload the current map
 
 - sm_rm
 
-## AutoMGE (not developed)
+## Discord Mix
 
-Will switch to specified MGE (or whatever) map if server is empty.
+A plugin that makes Discord announcements through an in-game command.
+Cvars that must be placed inside server.cfg:
+
+- discordmix_role [role]
+- discordmix_webhook [webhook link]
+
+To acquire the role code, write ``\@role`` in Discord, and copy the code that it generates. Make sure it is mentionable.

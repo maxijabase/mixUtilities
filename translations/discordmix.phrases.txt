@@ -1,0 +1,28 @@
+"Phrases"
+{
+	"alreadyAnnounced"
+		{
+			"es" "{green}[MA]{default} Juego ya anunciado. Esperá 10 minutos antes de anunciarlo de nuevo."
+			"en" "{green}[MA]{default} Game already announced. Wait 10 minutes before re-announcing."
+			"pt" "{green}[MA]{default} Jogo já anunciado. Espere 10 minutos antes de anuncia-lo novamente."
+		}
+	"notMixMap"
+		{
+			"es" "{green}[MA]{default} Colocá un mapa de mix antes de anunciar."
+			"en" "{green}[MA]{default} Please switch to a proper map before announcing."
+			"pt" "{green}[MA]{default} Mude pra um mapa correspondente antes de anunciar."
+		}
+	"usage"
+		{
+			"es" "{green}[MA]{default} Uso: sm_anunciar <mix/fake>."
+			"en" "{green}[MA]{default} Usage: sm_anunciar <mix/fake>."
+			"pt" "{green}[MA]{default} Uso: sm_anunciar <mix/fake>."
+		}
+	"announcedSuccessfully"
+		{
+			"#format" "{1:s}"
+			"es" "{green}[MA]{default} {1} anunciado con éxito!"
+			"en" "{green}[MA]{default} {1} announced successfully!"
+			"pt" "{green}[MA]{default} {1} anunciado com sucesso!"
+		}
+}

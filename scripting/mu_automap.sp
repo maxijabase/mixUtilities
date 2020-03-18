@@ -39,11 +39,11 @@ public void OnPluginStart()
 }
 public OnMapStart() {
 	
-	Handle mapChangeTimer = CreateTimer(60.0, doChangeMap, _, TIMER_REPEAT);
+	Handle mapChangeTimer = CreateTimer(60.0, doChangeMap, TIMER_REPEAT);
 	
 }
 
-doChangeMap(Handle mapChangeTimer) {
+public doChangeMap(Handle timer) {
 	
 	int clientCount = GetClientCount(false);
 	if (clientCount > 0) {
