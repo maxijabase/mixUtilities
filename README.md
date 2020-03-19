@@ -26,3 +26,11 @@ Cvars that must be placed inside server.cfg:
 - discordmix_webhook "webhook link"
 
 To acquire the role code, mention it after a backslash: `\@role`, and copy the code that it generates. Make sure it is mentionable. Both role and webhook go between quotes.
+
+## Connect String
+
+Provides the current connect string in the chat.
+
+- sm_connect
+
+
