@@ -22,7 +22,7 @@ A quick way to reload the current map
 A plugin that makes Discord announcements through an in-game command.
 Cvars that must be placed inside server.cfg:
 
-- discordmix_role [role]
-- discordmix_webhook [webhook link]
+- discordmix_role "role"
+- discordmix_webhook "webhook link"
 
-To acquire the role code, write ``\@role`` in Discord, and copy the code that it generates. Make sure it is mentionable.
+To acquire the role code, mention it after a backslash: `\@role`, and copy the code that it generates. Make sure it is mentionable. Both role and webhook go between quotes.
