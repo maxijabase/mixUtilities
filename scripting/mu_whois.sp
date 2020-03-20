@@ -1,18 +1,3 @@
-/*
-
-TODO
-make chat messages customizable through CFG
-
-
-CREATE TABLE IF NOT EXISTS whois_names (
-    entry INT NOT NULL AUTO_INCREMENT,
-    steam_id VARCHAR(64),
-    name VARCHAR(128),
-    permname VARCHAR(128),
-    date DATE,
-    PRIMARY KEY(entry)
-);
-*/
 #include <sourcemod>
 #include <morecolors>
 

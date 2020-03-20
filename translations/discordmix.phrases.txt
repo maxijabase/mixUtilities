@@ -25,4 +25,24 @@
 			"en" "{green}[MA]{default} {1} announced successfully!"
 			"pt" "{green}[MA]{default} {1} anunciado com sucesso!"
 		}
+	"webhookEmpty"
+		{
+			"en" "Webhook link error. Please, set your webhook link properly."
+		}
+	"webhookEmptyChat"
+		{
+			"es" "{green}[MA]{default} Error en el link del Webhook."
+			"en" "{green}[MA]{default} Webhook link error."
+			"es" "{green}[MA]{default} Erro no link do Webhook."
+		}
+	"roleEmpty"
+		{
+			"en" "Role error. Please, set the mentionable role properly."
+		}
+	"roleEmptyChat"
+		{
+			"es" "{green}[MA]{default} Error en el rol configurado."
+			"en" "{green}[MA]{default} Role error."
+			"es" "{green}[MA]{default} Erro no role configurado."
+		}
 }

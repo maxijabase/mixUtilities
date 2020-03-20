@@ -29,17 +29,16 @@ public Plugin myinfo =
 	url = "steamcommunity.com/profiles/76561198179807307"
 };
 
-//Handle mapChangeTimer = INVALID_HANDLE;
-Handle sm_mu_automap_map = INVALID_HANDLE;
+Handle mapChangeTimer = INVALID_HANDLE;
+Handle mu_automap = INVALID_HANDLE;
 
 public void OnPluginStart()
 {
 	sm_mu_automap_map = CreateConVar("sm_mu_automap_map", "mge_training_v8_beta4b", "Map the server will go to when empty.");
-	AutoExecConfig(true, "automap");
 }
 public OnMapStart() {
 	
-	Handle mapChangeTimer = CreateTimer(60.0, doChangeMap, TIMER_REPEAT);
+	CreateTimer(60.0, doChangeMap, _, TIMER_REPEAT);
 	
 }
 

@@ -12,10 +12,10 @@ make discord message customizable through CFG
 
 public Plugin myinfo = 
 {
-	name = "Discord API", 
+	name = "Discord Mix Announcer", 
 	author = "Bara - ampere", 
 	description = "Discord in-game announcement plugin.", 
-	version = "3.0", 
+	version = "3.1", 
 	url = "github.com/Bara - legacyhub.xyz"
 };
 
@@ -38,8 +38,8 @@ public void OnPluginStart()
 	RegAdminCmd("sm_anunciar", CMD_Anuncio, ADMFLAG_GENERIC, "Anuncia al Discord qué se está por jugar en Legacy.");
 	LoadTranslations("discordmix.phrases");
 	
-	discordmix_role = CreateConVar("discordmix_role", "", "Role that will be pinged in the announcement");
-	discordmix_webhook = CreateConVar("discordmix_webhook", "", "Link to the Discord Webhook");
+	discordmix_role = CreateConVar("discordmix_role", "", "Role that will be pinged in the announcement", FCVAR_PROTECTED);
+	discordmix_webhook = CreateConVar("discordmix_webhook", "", "Link to the Discord Webhook", FCVAR_PROTECTED);
 	
 }
 
@@ -76,6 +76,28 @@ public Action CMD_Anuncio(int client, int args)
 		return Plugin_Handled;
 	}
 	
+	// checkea que el link del webhook no esté vacío
+	
+	char whLink[512]; GetConVarString(discordmix_webhook, whLink, sizeof(whLink));
+	if (StrEqual(whLink, "", false)) {
+		
+		LogError("%t", "webhookEmpty");
+		CPrintToChat(client, "%t", "webhookEmptyChat");
+		return Plugin_Handled;
+		
+	}
+	
+	// checkea que el convar del rol no está vacío
+	
+	char roleC[32]; GetConVarString(discordmix_role, roleC, sizeof(roleC));
+	if (StrEqual(roleC, "", false)) {
+		
+		LogError("%t", "roleEmpty");
+		CPrintToChat(client, "%t", "roleEmptyChat");
+		return Plugin_Handled;
+		
+	}
+	
 	// al habilitarse el anuncio, se crean todas las variables que se almacenarán en la string formateada del anuncio
 	
 	char sMessage[512];
@@ -103,6 +125,11 @@ public Action CMD_Anuncio(int client, int args)
 		CPrintToChat(client, "%t", "usage");
 		return Plugin_Handled;
 	}
+	
+	// toma del 3er argumento como mensaje custom
+	
+	char cusMes[512]; GetCmdArg(2, cusMes, sizeof(cusMes));
+	
 	// se formatea el anuncio con "gameId" utilizado dentro del array gameType para determinar si el anuncio nombra un MIX o un FAKE
 	int gameId = 0;
 	
@@ -111,7 +138,7 @@ public Action CMD_Anuncio(int client, int args)
 	
 	char role[64]; GetConVarString(discordmix_role, role, sizeof(role));
 	
-	Format(sMessage, sizeof(sMessage), "%s\n:joystick: **__%s__**\n:black_small_square: ``connect %s:%s; password %s``\n:black_small_square: steam://connect/%s:%s/%s\n:map: **%s** | :busts_in_silhouette: **%d/%d** | :clock3: **%s**", role, gameType[gameId], serverIp, serverPort, serverPassword, serverIp, serverPort, serverPassword, mapName, playerCount, MaxClients, GetGmtDate());
+	Format(sMessage, sizeof(sMessage), "%s\n:joystick: **__%s__**\n*''%s''\n*:black_small_square: ``connect %s:%s; password %s``\n:black_small_square: steam://connect/%s:%s/%s\n:map: **%s** | :busts_in_silhouette: **%d/%d** | :clock3: **%s**", role, gameType[gameId], cusMes, serverIp, serverPort, serverPassword, serverIp, serverPort, serverPassword, mapName, playerCount, MaxClients, GetGmtDate());
 	
 	// se bloquea temporalmente la repetición del comando, y comienza un timer que lo reactiva en 10 minutos
 	
@@ -185,4 +212,4 @@ public Callback_SendToDiscord(Handle hRequest, bool bFailure, bool bRequestSucce
 public Callback_Response(const char[] sData)
 {
 	PrintToServer("Respuesta de callback [%s]", sData);
-}
+} 
