@@ -174,7 +174,7 @@ public Action CMD_Anuncio(int client, int args)
 		}
 	}
 	
-	Format(sMessage, sizeof(sMessage), "%s\n%s\n* _%s_\n*:black_small_square: ``connect %s:%s; password %s``\n:black_small_square: steam://connect/%s:%s/%s\n:map: **%s** | :busts_in_silhouette: **%d/%d** | :clock3: **%s**", roleMsg, annMsg, cusMes, serverIp, serverPort, serverPassword, serverIp, serverPort, serverPassword, mapName, playerCount, MaxClients, GetGmtDate());
+	Format(sMessage, sizeof(sMessage), "%s\n%s\n _%s_\n:black_small_square: ``connect %s:%s; password %s``\n:black_small_square: steam://connect/%s:%s/%s\n:map: **%s** | :busts_in_silhouette: **%d/%d** | :clock3: **%s**", roleMsg, annMsg, cusMes, serverIp, serverPort, serverPassword, serverIp, serverPort, serverPassword, mapName, playerCount, MaxClients, GetGmtDate());
 	
 	// se bloquea temporalmente la repetición del comando, y comienza un timer que lo reactiva en 10 minutos
 	
