@@ -1,9 +1,4 @@
-/*
-
-to do:
-make chat messages customizable through CFG
-
-*/
+#include <morecolors>
 
 public Plugin myinfo =  {
 	name = "Mix Utilities - Password Keeper", 
@@ -20,9 +15,12 @@ bool shouldKeepPW;
 public void OnPluginStart() {
 	shouldKeepPW = false;
 	
-	RegAdminCmd("sm_setpw", Command_setPw, ADMFLAG_PASSWORD, "Sets PW");
+	RegAdminCmd("sm_setpw", Command_setPw, ADMFLAG_PASSWORD, "Sets a fixed password.");
+	RegConsoleCmd("sm_pw", Command_Pw, "Shows current password.");
 	pw = FindConVar("sv_password");
 	pw.GetString(customPW, sizeof customPW);
+	
+	LoadTranslations("pwkeeper.phrases");
 }
 
 public void OnConfigsExecuted() {
@@ -41,14 +39,25 @@ public Action Command_setPw(int client, int args) {
 	pw.GetString(current, sizeof current);
 	if (args < 1) {
 		shouldKeepPW = false;
-		ReplyToCommand(client, "PW will not be recorded.");
+		CReplyToCommand(client, "%t", "notRecorded");
 	} else {
 		char argPW[128];
 		GetCmdArg(1, argPW, sizeof argPW);
 		shouldKeepPW = true;
 		customPW = argPW;
 		pw.SetString(customPW);
-		ReplyToCommand(client, "Fixed PW set to: %s", customPW);
+		CReplyToCommand(client, "%t", "fixedPw", customPW);
 	}
 	return Plugin_Handled;
-} 
+}
+
+public Action Command_Pw(int client, int args) {
+	char currentpwd[32];
+	ConVar currentpw;
+	currentpw = FindConVar("sv_password");
+	currentpw.GetString(currentpwd, sizeof(currentpwd));
+	CPrintToChat(client, "{green}[PK]{orange} %s", currentpwd);
+	
+	return Plugin_Handled;
+	
+}

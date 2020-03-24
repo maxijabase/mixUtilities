@@ -1,46 +1,44 @@
-/*
-
-to do:
-make chat messages customizable through CFG
-make discord message customizable through CFG
-
-*/
+#pragma semicolon 1
 
 #include <sourcemod>
 #include <SteamWorks>
 #include <morecolors>
+
+enum GameType {
+	Mix, 
+	Fake
+}
 
 public Plugin myinfo = 
 {
 	name = "Discord Mix Announcer", 
 	author = "Bara - ampere", 
 	description = "Discord in-game announcement plugin.", 
-	version = "3.1", 
+	version = "4.0", 
 	url = "github.com/Bara - legacyhub.xyz"
 };
 
-public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max)
-{
-	CreateNative("SendMessageToDiscord", Native_SendMessageToDiscord);
-	
-	RegPluginLibrary("discord");
-	
-	return APLRes_Success;
-}
-
 bool g_permitir = true;
-Handle discordmix_role = INVALID_HANDLE;
-Handle discordmix_webhook = INVALID_HANDLE;
+Handle discordmix_role1 = INVALID_HANDLE;
+Handle discordmix_role2 = INVALID_HANDLE;
+Handle discordmix_webhook1 = INVALID_HANDLE;
+Handle discordmix_webhook2 = INVALID_HANDLE;
+
+Regex regWebhook;
+Regex regRole;
 
 public void OnPluginStart()
 {
-	
-	RegAdminCmd("sm_anunciar", CMD_Anuncio, ADMFLAG_GENERIC, "Anuncia al Discord qué se está por jugar en Legacy.");
+	RegAdminCmd("sm_anunciar", CMD_Anuncio, ADMFLAG_GENERIC, "Discord announcement");
 	LoadTranslations("discordmix.phrases");
 	
-	discordmix_role = CreateConVar("discordmix_role", "", "Role that will be pinged in the announcement", FCVAR_PROTECTED);
-	discordmix_webhook = CreateConVar("discordmix_webhook", "", "Link to the Discord Webhook", FCVAR_PROTECTED);
+	regWebhook = CompileRegex("discordapp.com\\/api\\/webhooks\\/([^\\/]+)\\/([^\\/]+)");
+	regRole = CompileRegex("<@&[0-9]+?>");
 	
+	discordmix_role1 = CreateConVar("discordmix_role1", "", "Role that will be pinged in the announcement", FCVAR_PROTECTED);
+	discordmix_role2 = CreateConVar("discordmix_role2", "", "Role that will be pinged in the announcement", FCVAR_PROTECTED);
+	discordmix_webhook1 = CreateConVar("discordmix_webhook1", "", "Link to the Discord Webhook", FCVAR_PROTECTED);
+	discordmix_webhook2 = CreateConVar("discordmix_webhook2", "", "Link to the Discord Webhook", FCVAR_PROTECTED);
 }
 
 char GetGmtDate()
@@ -76,28 +74,6 @@ public Action CMD_Anuncio(int client, int args)
 		return Plugin_Handled;
 	}
 	
-	// checkea que el link del webhook no esté vacío
-	
-	char whLink[512]; GetConVarString(discordmix_webhook, whLink, sizeof(whLink));
-	if (StrEqual(whLink, "", false)) {
-		
-		LogError("%t", "webhookEmpty");
-		CPrintToChat(client, "%t", "webhookEmptyChat");
-		return Plugin_Handled;
-		
-	}
-	
-	// checkea que el convar del rol no está vacío
-	
-	char roleC[32]; GetConVarString(discordmix_role, roleC, sizeof(roleC));
-	if (StrEqual(roleC, "", false)) {
-		
-		LogError("%t", "roleEmpty");
-		CPrintToChat(client, "%t", "roleEmptyChat");
-		return Plugin_Handled;
-		
-	}
-	
 	// al habilitarse el anuncio, se crean todas las variables que se almacenarán en la string formateada del anuncio
 	
 	char sMessage[512];
@@ -115,30 +91,90 @@ public Action CMD_Anuncio(int client, int args)
 	
 	// se almacena en la variable "type" el argumento del comando, que permite determinar configuraciones para MIX o FAKE
 	
-	char type[32], gameType[2][32] =  { "MIX", "FAKE" };
-	GetCmdArgString(type, sizeof(type));
+	char gameType[32];
+	GetCmdArg(1, gameType, sizeof(gameType));
 	
 	// si "type" está vacía, que quiere decir que no hubo argumentos, rebota el comando explicando su uso
 	
-	if (!CheckType(type))
+	char sarg[32];
+	GetCmdArgString(sarg, sizeof(sarg));
+	if ((strlen(sarg) < 1) || !CheckType(gameType))
 	{
 		CPrintToChat(client, "%t", "usage");
 		return Plugin_Handled;
 	}
 	
+	GameType game = GetType(gameType);
+	
 	// toma del 3er argumento como mensaje custom
 	
-	char cusMes[512]; GetCmdArg(2, cusMes, sizeof(cusMes));
+	int msgArg = 2;
+	bool isNovatos = false;
 	
-	// se formatea el anuncio con "gameId" utilizado dentro del array gameType para determinar si el anuncio nombra un MIX o un FAKE
-	int gameId = 0;
+	if (GetCmdArgs() >= 2)
+	{
+		char arg2[32];
+		GetCmdArg(2, arg2, sizeof(arg2));
+		
+		isNovatos = (StrContains(arg2, "novatos", false) != -1) ? true : false;
+		if (isNovatos)
+			msgArg = 3;
+	}
 	
-	if (StrContains(type, "fake", false) != -1) {
-		gameId = 1; }
+	// loop para el nensaje custom
 	
-	char role[64]; GetConVarString(discordmix_role, role, sizeof(role));
+	char cusMes[512];
 	
-	Format(sMessage, sizeof(sMessage), "%s\n:joystick: **__%s__**\n*''%s''\n*:black_small_square: ``connect %s:%s; password %s``\n:black_small_square: steam://connect/%s:%s/%s\n:map: **%s** | :busts_in_silhouette: **%d/%d** | :clock3: **%s**", role, gameType[gameId], cusMes, serverIp, serverPort, serverPassword, serverIp, serverPort, serverPassword, mapName, playerCount, MaxClients, GetGmtDate());
+	for (int i = msgArg; i <= GetCmdArgs(); i++)
+	{
+		char cusBuf[220];
+		GetCmdArg(i, cusBuf, sizeof(cusBuf));
+		Format(cusBuf, sizeof(cusBuf), "%s ", cusBuf);
+		
+		StrCat(cusMes, sizeof(cusMes), cusBuf);
+	}
+	
+	// checkeo obligatorio del role 1 (uno mínimo debe haber)
+	
+	char role1[32];
+	GetConVarString(discordmix_role1, role1, sizeof(role1));
+	if (!MatchRegex(regRole, role1)){
+		LogError("%t", "roleEmpty");
+		CPrintToChat(client, "%t", "roleEmptyChat");
+		return Plugin_Handled;
+	}
+	
+	// formateo del tipo de juego según argumentos
+	
+	char annMsg[32];
+	char roleMsg[32];
+	
+	Format(annMsg, sizeof(annMsg), ":joystick: **__MIX__**");
+	if (game)
+		Format(annMsg, sizeof(annMsg), ":joystick: **__FAKE__**");
+	
+	roleMsg = role1;
+	if (isNovatos) {
+		
+		// sólo si se llega a usar lo de novatos, se hace crucial frenar el plugin si el 2do rol es incorrecto
+		
+		char role2[32]; GetConVarString(discordmix_role2, role2, sizeof(role2));
+		if (!MatchRegex(regRole, role2)){
+			LogError("%t", "roleEmpty");
+			return Plugin_Handled;
+		}
+		
+		// pasó, entonces formatea novatos normalmente
+		
+		roleMsg = role2;
+		
+		Format(annMsg, sizeof(annMsg), ":baby: **__MIX NOVATOS__**");
+		if (game){
+			Format(annMsg, sizeof(annMsg), ":baby: **__FAKE NOVATOS__**");
+		}
+	}
+	
+	Format(sMessage, sizeof(sMessage), "%s\n%s\n* _%s_\n*:black_small_square: ``connect %s:%s; password %s``\n:black_small_square: steam://connect/%s:%s/%s\n:map: **%s** | :busts_in_silhouette: **%d/%d** | :clock3: **%s**", roleMsg, annMsg, cusMes, serverIp, serverPort, serverPassword, serverIp, serverPort, serverPassword, mapName, playerCount, MaxClients, GetGmtDate());
 	
 	// se bloquea temporalmente la repetición del comando, y comienza un timer que lo reactiva en 10 minutos
 	
@@ -147,23 +183,27 @@ public Action CMD_Anuncio(int client, int args)
 	
 	// se ejecuta el comando que cambia el modo del servidor al modo anunciado para evitar confusiones
 	
-	ServerCommand("sm_%s", gameType[gameId]);
 	
 	// se hace el envío final del canal y del mensaje formateado hacia la API de Discord
 	
 	char sChannel[10] = "mix";
-	SendToDiscord(sChannel, sMessage);
+	SendToDiscord(sChannel, sMessage, isNovatos);
 	
 	// confirmacion en chat a quien ejecutó el comando
 	
-	CPrintToChat(client, "%t", "announcedSuccessfully", gameType[gameId]);
+	CPrintToChat(client, "%t", "announcedSuccessfully", gameType);
 	
 	return Plugin_Continue;
+}
+
+GameType GetType(char[] arg) {
+	return (StrContains(arg, "mix", false) != -1) ? Mix : Fake;
 }
 
 bool CheckType(char[] type) {
 	return ((StrContains(type, "mix", false) != -1) || (StrContains(type, "fake", false) != -1));
 }
+
 
 public Action permAnuncio(Handle timer, client) {
 	
@@ -171,18 +211,19 @@ public Action permAnuncio(Handle timer, client) {
 	g_permitir = true;
 }
 
-public int Native_SendMessageToDiscord(Handle plugin, int numParams)
+public void SendToDiscord(const char[] channel, const char[] message, bool novato)
 {
-	char sChannel[64], sMessage[512];
-	GetNativeString(1, sChannel, sizeof(sChannel));
-	GetNativeString(2, sMessage, sizeof(sMessage));
+	char sURL[512];
 	
-	SendToDiscord(sChannel, sMessage);
-}
-
-public void SendToDiscord(const char[] channel, const char[] message)
-{
-	char sURL[512]; GetConVarString(discordmix_webhook, sURL, sizeof(sURL));
+	GetConVarString(discordmix_webhook1, sURL, sizeof(sURL));
+	if (novato)
+		GetConVarString(discordmix_webhook2, sURL, sizeof(sURL));
+	
+	if (!MatchRegex(regWebhook, sURL))
+	{
+		LogError("%t", "webhookEmpty");
+	}
+	
 	Handle request = SteamWorks_CreateHTTPRequest(k_EHTTPMethodPOST, sURL);
 	
 	SteamWorks_SetHTTPRequestGetOrPostParameter(request, "content", message);
@@ -193,7 +234,6 @@ public void SendToDiscord(const char[] channel, const char[] message)
 		PrintToServer("Error en el envío del mensaje a Discord.");
 		delete request;
 	}
-	
 }
 
 public Callback_SendToDiscord(Handle hRequest, bool bFailure, bool bRequestSuccessful, EHTTPStatusCode eStatusCode)

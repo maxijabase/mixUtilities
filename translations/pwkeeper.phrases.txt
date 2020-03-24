@@ -1,0 +1,16 @@
+"Phrases"
+{
+	"notRecorded"
+		{
+			"es" "{green}[PK]{default} La contraseña ahora no permanecerá."
+			"en" "{green}[PK]{default} Password will not be kept between maps."
+			"pt" "{green}[PK]{default} A senha agora não ficará fixa."
+		}
+	"fixedPw"
+		{
+			"#format" "{1:s}"
+			"es" "{green}[PK]{default} La contraseña se fijó a {orange}{1}{default}."
+			"en" "{green}[PK]{default} Password fixed to {orange}{1}{default}."
+			"pt" "{green}[PK]{default} Senha fixada pra {orange}{1}{default}."
+		}
+}
