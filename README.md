@@ -20,11 +20,7 @@ A quick way to reload the current map
 ## Discord Mix
 
 A plugin that makes Discord announcements through an in-game command.
-Cvars that must be placed inside server.cfg:
-
-- discordmix_role "role"
-- discordmix_webhook "webhook link"
-
+Cvars are inside tf/cfg/sourcemod under the name of the plugin.
 To acquire the role code, mention it after a backslash: `\@role`, and copy the code that it generates. Make sure it is mentionable. Both role and webhook go between quotes.
 
 ## Connect String
@@ -33,4 +29,7 @@ Provides the current connect string in the chat.
 
 - sm_connect
 
+## AutoMap
+
+Changes to specified map if server remains empty.
 
