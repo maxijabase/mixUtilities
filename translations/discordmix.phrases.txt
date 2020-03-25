@@ -45,4 +45,10 @@
 			"en" "{green}[MA]{default} Role error."
 			"es" "{green}[MA]{default} Erro no role configurado."
 		}
+	"noCusMes"
+		{
+			"es" "Sin mensaje custom :("
+			"en" "No custom message :("
+			"pt" "Sem menságem custom :("
+		}
 }

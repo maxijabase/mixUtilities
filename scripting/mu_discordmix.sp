@@ -41,11 +41,12 @@ public void OnPluginStart()
 	discordmix_webhook2 = CreateConVar("discordmix_webhook2", "", "Link to the Discord Webhook", FCVAR_PROTECTED);
 }
 
+// construcción de la hora
+
 char GetGmtDate()
 {
 	int timestamp = GetTime();
 	
-	// Build string
 	char GMTTime[40];
 	FormatTime(GMTTime, sizeof(GMTTime), "%H:%M", timestamp);
 	
@@ -57,7 +58,7 @@ public Action CMD_Anuncio(int client, int args)
 	
 	// checkea si el mix ya fue anunciado hace poco tiempo, si es así, rebota
 	
-	if (g_permitir == false) {
+	if (!g_permitir) {
 		
 		CPrintToChat(client, "%t", "alreadyAnnounced");
 		return Plugin_Handled;
@@ -134,6 +135,10 @@ public Action CMD_Anuncio(int client, int args)
 		StrCat(cusMes, sizeof(cusMes), cusBuf);
 	}
 	
+	if(StrEqual(cusMes, "", false)){
+		Format(cusMes, sizeof(cusMes), "%t", "noCusMes");
+	}
+	
 	// checkeo obligatorio del role 1 (uno mínimo debe haber)
 	
 	char role1[32];
@@ -174,15 +179,14 @@ public Action CMD_Anuncio(int client, int args)
 		}
 	}
 	
+	// formateo final
+	
 	Format(sMessage, sizeof(sMessage), "%s\n%s\n _%s_\n:black_small_square: ``connect %s:%s; password %s``\n:black_small_square: steam://connect/%s:%s/%s\n:map: **%s** | :busts_in_silhouette: **%d/%d** | :clock3: **%s**", roleMsg, annMsg, cusMes, serverIp, serverPort, serverPassword, serverIp, serverPort, serverPassword, mapName, playerCount, MaxClients, GetGmtDate());
 	
 	// se bloquea temporalmente la repetición del comando, y comienza un timer que lo reactiva en 10 minutos
 	
 	g_permitir = false;
 	CreateTimer(600.0, permAnuncio, client, TIMER_DATA_HNDL_CLOSE);
-	
-	// se ejecuta el comando que cambia el modo del servidor al modo anunciado para evitar confusiones
-	
 	
 	// se hace el envío final del canal y del mensaje formateado hacia la API de Discord
 	
