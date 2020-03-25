@@ -1,66 +1,45 @@
-/*
-
-to do:
-make MGE map customizable through CFG
-maybe kill timer when map is MGE to avoid resources consumption?
-
-*/
+#include <sourcemod>
 
 #pragma semicolon 1
+#pragma newdecls required
 
-#define DEBUG
-
-#define PLUGIN_AUTHOR ""
-#define PLUGIN_VERSION "0.00"
-
-#include <sourcemod>
-#include <sdktools>
-#include <tf2>
-#include <tf2_stocks>
-#include <morecolors>
-//#include <sdkhooks>
-
-public Plugin myinfo = 
-{
-	name = "Mix Utilities - AutoMap", 
-	author = "ratawar", 
-	description = "Switch to MGE if server is empty", 
-	version = "1.0", 
-	url = "steamcommunity.com/profiles/76561198179807307"
-};
-
-Handle mapChangeTimer = INVALID_HANDLE;
-Handle mu_automap = INVALID_HANDLE;
+ConVar g_cvMap;
+ConVar g_cvEnabled;
 
 public void OnPluginStart()
 {
-	sm_mu_automap_map = CreateConVar("sm_mu_automap_map", "mge_training_v8_beta4b", "Map the server will go to when empty.");
-}
-public OnMapStart() {
+	g_cvMap = CreateConVar("am_map", "", "Map the server will go to when empty.");
+	g_cvEnabled = CreateConVar("am_enable", "1", "Enable automap.");
 	
-	CreateTimer(60.0, doChangeMap, _, TIMER_REPEAT);
-	
+	AutoExecConfig();
 }
 
-public doChangeMap(Handle timer) {
-	
-	int clientCount = GetClientCount(false);
-	if (clientCount > 0) {
-		
-		return Plugin_Handled;
-		
-	}
-	
-	char setMap[32]; GetConVarString(sm_mu_automap_map, setMap, sizeof(setMap));
-	char currentMap[32]; GetCurrentMap(currentMap, sizeof(currentMap));
-	
-	if (strcmp(setMap, currentMap, false) == 0) {
-		
-		return Plugin_Handled;
-		
-	}
-	
-	ForceChangeLevel(setMap, "Server empty, switching to set map...");
-	return Plugin_Handled;
+public void OnMapStart() 
+{
+	if(g_cvEnabled.BoolValue)
+		CreateTimer(30.0, doChangeMap, _, TIMER_REPEAT);
 }
 
+public Action doChangeMap(Handle timer) 
+{
+	// Bail if server not empty
+	if(GetClientCount())
+		return Plugin_Continue; 
+		
+	char sMap[PLATFORM_MAX_PATH]; 
+	g_cvMap.GetString(sMap, sizeof(sMap));
+
+	// Bail if next map not set
+	if(!strlen(sMap))
+		return Plugin_Continue;
+
+	// Bail if current map equals next map
+	char sCurrentMap[32];
+	GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
+		
+	if(StrEqual(sCurrentMap, sMap))
+		return Plugin_Continue;
+	
+	ForceChangeLevel(sMap, "Server empty, switching to set map");
+	return Plugin_Continue;
+}

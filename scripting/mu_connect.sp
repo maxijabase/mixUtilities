@@ -1,10 +1,3 @@
-/*
-
-to do:
-nothing, this plugin is perfect
-
-*/
-
 #include <sourcemod>
 
 public Plugin myinfo = 

@@ -35,10 +35,12 @@ public void OnPluginStart()
 	regWebhook = CompileRegex("discordapp.com\\/api\\/webhooks\\/([^\\/]+)\\/([^\\/]+)");
 	regRole = CompileRegex("<@&[0-9]+?>");
 	
-	discordmix_role1 = CreateConVar("discordmix_role1", "", "Role that will be pinged in the announcement", FCVAR_PROTECTED);
-	discordmix_role2 = CreateConVar("discordmix_role2", "", "Role that will be pinged in the announcement", FCVAR_PROTECTED);
-	discordmix_webhook1 = CreateConVar("discordmix_webhook1", "", "Link to the Discord Webhook", FCVAR_PROTECTED);
-	discordmix_webhook2 = CreateConVar("discordmix_webhook2", "", "Link to the Discord Webhook", FCVAR_PROTECTED);
+	discordmix_role1 = CreateConVar("discordmix_role1", "", "First role that will be pinged in one of the announcements.", FCVAR_PROTECTED);
+	discordmix_role2 = CreateConVar("discordmix_role2", "", "Second role that will be pinged in one of the announcements.", FCVAR_PROTECTED);
+	discordmix_webhook1 = CreateConVar("discordmix_webhook1", "", "Link to the Nº1 Discord Webhook.", FCVAR_PROTECTED);
+	discordmix_webhook2 = CreateConVar("discordmix_webhook2", "", "Link to the Nº2 Discord Webhook.", FCVAR_PROTECTED);
+	
+	AutoExecConfig();
 }
 
 // construcción de la hora
