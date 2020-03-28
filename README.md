@@ -12,8 +12,8 @@ A plugin designed to quickly identify aliasing players by giving them a permanen
 - sm_whois_full [player]
 
 Add the following code to your databases.cfg file:
-
-```"whois"
+```
+"whois"
 	{
 		"driver"			"mysql"
 		"host"				""
@@ -23,7 +23,6 @@ Add the following code to your databases.cfg file:
 		"port"			"3306"
 	}
  ```
-
 ## ReloadMap
 
 A quick way to reload the current map
