@@ -40,7 +40,7 @@ public void OnPluginStart()
 	discordmix_webhook1 = CreateConVar("discordmix_webhook1", "", "Link to the Nº1 Discord Webhook.", FCVAR_PROTECTED);
 	discordmix_webhook2 = CreateConVar("discordmix_webhook2", "", "Link to the Nº2 Discord Webhook.", FCVAR_PROTECTED);
 	
-	AutoExecConfig();
+	AutoExecConfig(true, "DiscordMix");
 }
 
 // construcción de la hora

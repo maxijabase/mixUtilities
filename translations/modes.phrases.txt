@@ -1,0 +1,52 @@
+"Phrases"
+{
+	"fakeUsage"
+	{
+		"es" "{green}[MD]{default} Uso: sm_fake / sm_fake novatos"
+		"en" "{green}[MD]{default} Usage: sm_fake / sm_fake novatos"
+		"pt" "{green}[MD]{default} Uso: sm_fake / sm_fake novatos"
+	}
+	"mixUsage"
+	{
+		"es" "{green}[MD]{default} Uso: sm_mix / sm_mix novatos"
+		"en" "{green}[MD]{default} Uso: sm_mix / sm_mix novatos"
+		"pt" "{green}[MD]{default} Uso: sm_mix / sm_mix novatos"
+
+	}
+	"incorrectMap"
+	{
+		"es" "{green}[MD]{default} Mapa incorrecto."
+		"en" "{green}[MD]{default} Incorrect map."
+		"pt" "{green}[MD]{default} Mapa errado."
+	}
+	"fakeNovSuccess"
+	{
+		"es" "{green}[MD]{default} Fake Novatos establecido."
+		"en" "{green}[MD]{default} Fake Novatos set."
+		"pt" "{green}[MD]{default} Fake Novatos establecido."
+	}
+	"fakeSuccess"
+	{
+		"es" "{green}[MD]{default} Fake establecido."
+		"en" "{green}[MD]{default} Fake set."
+		"pt" "{green}[MD]{default} Fake establecido."
+	}
+	"mixNovSuccess"
+	{
+		"es" "{green}[MD]{default} Mix Novatos establecido."
+		"en" "{green}[MD]{default} Mix Novatos set."
+		"pt" "{green}[MD]{default} Mix Novatos establecido."
+	}
+	"mixSuccess"
+	{
+		"es" "{green}[MD]{default} Mix establecido."
+		"en" "{green}[MD]{default} Mix set."
+		"pt" "{green}[MD]{default} Mix establecido."
+	}
+	"treinoSuccess"
+	{
+		"es" "{green}[MD]{default} Treino establecido."
+		"en" "{green}[MD]{default} Treino set."
+		"pt" "{green}[MD]{default} Treino establecido."
+	}
+}

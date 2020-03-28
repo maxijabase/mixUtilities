@@ -11,13 +11,15 @@ public void OnPluginStart()
 	g_cvMap = CreateConVar("am_map", "", "Map the server will go to when empty.");
 	g_cvEnabled = CreateConVar("am_enable", "1", "Enable automap.");
 	
-	AutoExecConfig();
+	AutoExecConfig(true, "AutoMap");
 }
 
 public void OnMapStart()
 {
-	if (g_cvEnabled.BoolValue)
-		CreateTimer(30.0, doChangeMap, _, TIMER_REPEAT);
+	if (!g_cvEnabled.BoolValue) {
+		return;
+	}
+	CreateTimer(30.0, doChangeMap, _, TIMER_REPEAT);
 }
 
 public Action doChangeMap(Handle timer)
@@ -34,7 +36,7 @@ public Action doChangeMap(Handle timer)
 	if (!strlen(sMap))
 		return Plugin_Continue;
 	
-	// Bail if current map equals next map
+	// Bail if current map equals automap
 	char sCurrentMap[32];
 	GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
 	
@@ -52,43 +54,13 @@ public Action doChangeMap(Handle timer)
 
 stock bool DoesSourceTvExist()
 {
-    for (int i = 1; i <= MaxClients; i++)
-    {
-        if (IsClientConnected(i) && IsClientSourceTV(i))
-        {
-            return true;
-        }
-    }
-    
-    return false;
+	for (int i = 1; i <= MaxClients; i++)
+	{
+		if (IsClientConnected(i) && IsClientSourceTV(i))
+		{
+			return true;
+		}
+	}
+	
+	return false;
 }
-
-/*bool IsSourceTVOnlyClient() {
-	
-	int clientCount = GetClientCount(false);
-	bool tvIsEnabled = false;
-	
-	// Method 1: check tv_enable
-	
-	bool isTVEnabled;
-	Handle tv_enableConVar = FindConVar("tv_enable");
-	
-	if (tv_enableConVar != INVALID_HANDLE) {
-		isTVEnabled = GetConVarBool(tv_enableConVar);
-		tvIsEnabled = isTVEnabled;
-	}else{
-
-	//Method 2: iterate through clients
-	
-	Handle tv_nameConVar = FindConVar("tv_name")
-	char tvname[PLATFORM_MAX_PATH]; 
-	GetConVarString(tv_nameConVar, tvname, sizeof(tvname));
-	for (int i = 1; i <= clientCount; i++) {
-		if	
-	
-	
-
-}
-	
-	return tvIsEnabled;
-} */
