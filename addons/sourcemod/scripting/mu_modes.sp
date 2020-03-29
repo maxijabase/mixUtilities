@@ -1,6 +1,14 @@
 #include <sourcemod>
 #include <morecolors>
 
+public Plugin myinfo = 
+{
+	name = "Mix Utilities - Modes", 
+	author = "ratawar", 
+	description = "Set server modes.", 
+	version = "1.0", 
+	url = "legacyhub.xyz"
+};
 public void OnPluginStart() {
 	
 	RegAdminCmd("sm_fake", CMD_Fake, ADMFLAG_GENERIC, "Sets fake mode.");
@@ -21,12 +29,12 @@ public Action CMD_Fake(int client, int args) {
 	
 	char arg1[16]; GetCmdArg(1, arg1, sizeof(arg1));
 	if (StrEqual(arg1, "novatos", false)) {
-		ServerCommand("exec Modes/Fake_novatos.cfg");
+		ServerCommand("exec modes/Fake_novatos.cfg");
 		CPrintToChat(client, "%t", "fakeNovSuccess");
 		return Plugin_Handled;
 	}
 	if (StrEqual(arg1, "", false)) {
-		ServerCommand("exec Modes/Fake.cfg");
+		ServerCommand("exec modes/Fake.cfg");
 		CPrintToChat(client, "%t", "fakeSuccess");
 		return Plugin_Handled;
 	}
@@ -44,12 +52,12 @@ public Action CMD_Mix(int client, int args) {
 	
 	char arg1[16]; GetCmdArg(1, arg1, sizeof(arg1));
 	if (StrEqual(arg1, "novatos", false)) {
-		ServerCommand("exec Modes/Mix_novatos.cfg");
+		ServerCommand("exec modes/Mix_novatos.cfg");
 		CPrintToChat(client, "%t", "mixNovSuccess");
 		return Plugin_Handled;
 	}
 	if (StrEqual(arg1, "", false)) {
-		ServerCommand("exec Modes/Mix_normal.cfg");
+		ServerCommand("exec modes/Mix_normal.cfg");
 		CPrintToChat(client, "%t", "mixSuccess");
 		return Plugin_Handled;
 	}
@@ -65,7 +73,7 @@ public Action CMD_Treino(int client, int args) {
 		return Plugin_Handled;
 	}
 	
-	ServerCommand("exec Modes/Treino.cfg");
+	ServerCommand("exec modes/Treino.cfg");
 	CReplyToCommand(client, "%t", "treinoSuccess");
 	return Plugin_Handled;
 }
@@ -75,9 +83,9 @@ public Action CMD_Match(int client, int args) {
 	if (!IsValidMap()) {
 		CReplyToCommand(client, "%t", "incorrectMap");
 		return Plugin_Handled;
-	
-}
-	ServerCommand("exec Modes/Match.cfg");
+		
+	}
+	ServerCommand("exec modes/Match.cfg");
 	CReplyToCommand(client, "%t", "matchUsage");
 	return Plugin_Handled;
 }
