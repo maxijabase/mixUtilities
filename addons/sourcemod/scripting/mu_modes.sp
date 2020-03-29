@@ -6,6 +6,7 @@ public void OnPluginStart() {
 	RegAdminCmd("sm_fake", CMD_Fake, ADMFLAG_GENERIC, "Sets fake mode.");
 	RegAdminCmd("sm_treino", CMD_Treino, ADMFLAG_GENERIC, "Sets treino mode.");
 	RegAdminCmd("sm_mix", CMD_Mix, ADMFLAG_GENERIC, "Sets mix mode.");
+	RegAdminCmd("sm_match", CMD_Match, ADMFLAG_GENERIC, "Sets match mode.");
 	
 	LoadTranslations("modes.phrases");
 	
@@ -14,7 +15,7 @@ public void OnPluginStart() {
 public Action CMD_Fake(int client, int args) {
 	
 	if (!IsValidMap()) {
-		ReplyToCommand(client, "%t", "incorrectMap");
+		CReplyToCommand(client, "%t", "incorrectMap");
 		return Plugin_Handled;
 	}
 	
@@ -37,7 +38,7 @@ public Action CMD_Fake(int client, int args) {
 public Action CMD_Mix(int client, int args) {
 	
 	if (!IsValidMap()) {
-		ReplyToCommand(client, "%t", "incorrectMap");
+		CReplyToCommand(client, "%t", "incorrectMap");
 		return Plugin_Handled;
 	}
 	
@@ -60,12 +61,24 @@ public Action CMD_Mix(int client, int args) {
 public Action CMD_Treino(int client, int args) {
 	
 	if (!IsValidMap()) {
-		ReplyToCommand(client, "%t", "incorrectMap");
+		CReplyToCommand(client, "%t", "incorrectMap");
 		return Plugin_Handled;
 	}
 	
 	ServerCommand("exec Modes/Treino.cfg");
 	CReplyToCommand(client, "%t", "treinoSuccess");
+	return Plugin_Handled;
+}
+
+public Action CMD_Match(int client, int args) {
+	
+	if (!IsValidMap()) {
+		CReplyToCommand(client, "%t", "incorrectMap");
+		return Plugin_Handled;
+	
+}
+	ServerCommand("exec Modes/Match.cfg");
+	CReplyToCommand(client, "%t", "matchUsage");
 	return Plugin_Handled;
 }
 

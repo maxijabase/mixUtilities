@@ -49,4 +49,10 @@
 		"en" "{green}[MD]{default} Treino set."
 		"pt" "{green}[MD]{default} Treino establecido."
 	}
+	"matchSuccess"
+	{
+		"es" "{green}[MD]{default} Match establecido."
+		"en" "{green}[MD]{default} Match set."
+		"pt" "{green}[MD]{default} Match establecido."
+	}
 }
