@@ -33,8 +33,7 @@ A quick way to reload the current map
 
 A plugin that makes Discord announcements through an in-game command.
 Cvars are inside tf/cfg/sourcemod under the name of the plugin.
-To acquire the role code, mention it after a backslash: `\@role`, and copy the code that it generates. Make sure it is mentionable. Both role and webhook go between quotes.
-Use both number ones. Webhook 2 and Role 2 are an optional for a specific use.
+To acquire the role code, mention it after a backslash: `\@role`, and copy the code that it generates, make sure it is mentionable. Both role and webhook go between quotes. Webhook 2 and Role 2 are an optional for a specific use.
 
 ## Connect String
 
@@ -42,15 +41,13 @@ Provides the current connect string in the chat.
 
 - sm_connect
 
-## AutoMap
+## [AutoMap](https://forums.alliedmods.net/showthread.php?p=2692082)
 
-Changes to specified map if server remains empty.
-Cvars are inside tf/cfg/sourcemod/AutoMap.cfg.
+Changes to specified map if server remains empty. Cvars are inside **tf/cfg/sourcemod/AutoMap.cfg**.
 
 ## AutoCFG
 
-Executes specific configs based on the current map.
-Can be configurable through convars inside a CFG.
+Executes specific configs based on the current map. Cvars are inside **tf/cfg/sourcemod/AutoCFG.cfg**.
 
 ## Player Check
 
@@ -71,4 +68,6 @@ For South American pugs, switches modes through CFGs.
 
 Sets a password that lasts through maps. No argument disables password lock.
 
+- sm_pw
+- sm_setpw
 - sm_setpw <password>
