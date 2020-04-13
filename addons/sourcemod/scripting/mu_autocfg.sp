@@ -1,9 +1,9 @@
 #include <sourcemod>
 
 public Plugin myinfo =  {
-	name = "Auto-Configs", 
-	author = "ratinho & puntero", 
-	description = "configs"
+	name = "Mix Utilities - AutoCFG", 
+	author = "ampere & puntero", 
+	description = "Auto execute specific configs on certain maps."
 };
 
 enum MapType {
@@ -11,6 +11,19 @@ enum MapType {
 	koth, 
 	mix, 
 	mge
+}
+
+ConVar cult, ckoth, cmix, cmge;
+
+public void OnPluginStart() {
+	
+	cult = CreateConVar("sm_autocfg_ultiduo", "", "Ultiduo CFG.");
+	ckoth = CreateConVar("sm_autocfg_koth", "", "KOTH CFG.");
+	cmix = CreateConVar("sm_autocfg_mix", "", "5cp CFG.");
+	cmge = CreateConVar("sm_autocfg_mge", "", "MGE CFG.");
+	
+	AutoExecConfig(true, "AutoCFG");
+	
 }
 
 MapType GetMapType(char[] map) {
@@ -28,16 +41,24 @@ MapType GetMapType(char[] map) {
 
 void GetConfig(char[] name, char[] buf, int size)
 {
+	
+	char c_ult[16], c_koth[16], c_mix[16], c_mge[16];
+	
+	GetConVarString(cult, c_ult, sizeof(c_ult));
+	GetConVarString(ckoth, c_koth, sizeof(c_koth));
+	GetConVarString(cmix, c_mix, sizeof(c_mix));
+	GetConVarString(cmge, c_mge, sizeof(c_mge));
+	
 	switch (GetMapType(name))
 	{
 		case ultiduo:
-			strcopy(buf, size, "ETF2L/etf2l_ultiduo.cfg");
+			strcopy(buf, size, c_ult);
 		case koth:
-			strcopy(buf, size, "Mix_koth.cfg");
+			strcopy(buf, size, c_koth);
 		case mix:
-			strcopy(buf, size, "Mix.cfg");
+			strcopy(buf, size, c_mix);
 		case mge:
-			strcopy(buf, size, "mge_training_v8_beta4b.cfg");
+			strcopy(buf, size, c_mge);
 	}
 }
 

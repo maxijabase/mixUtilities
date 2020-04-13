@@ -227,8 +227,6 @@ public Action Command_Activity(int client, int args)
 			return Plugin_Handled;
 		}
 	}
-	
-	return Plugin_Handled;
 }
 
 public int Handler_ActivityList(Menu hMenu, MenuAction action, int client, int selection)

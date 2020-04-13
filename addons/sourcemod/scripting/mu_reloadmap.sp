@@ -16,9 +16,9 @@ public void OnPluginStart()
 {
 	
 	RegAdminCmd("sm_rm", reloadMap, ADMFLAG_GENERIC, "Reloads the current map.");
+	RegAdminCmd("sm_reloadmap", reloadMap, ADMFLAG_GENERIC, "Reloads the current map.");
 	
 }
-
 
 public Action reloadMap(int client, int args) {
 	

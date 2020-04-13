@@ -11,12 +11,19 @@ public Plugin myinfo =
 };
 public void OnPluginStart() {
 	
+	if (!DoConfigsExist())
+		SetFailState("[AutoCFG] Files error. Please check the configs properly. Plugin disabled.")
+		
+	PrintToServer("[AutoCFG] Plugin loaded successfully!")
+	
 	RegAdminCmd("sm_fake", CMD_Fake, ADMFLAG_GENERIC, "Sets fake mode.");
 	RegAdminCmd("sm_treino", CMD_Treino, ADMFLAG_GENERIC, "Sets treino mode.");
 	RegAdminCmd("sm_mix", CMD_Mix, ADMFLAG_GENERIC, "Sets mix mode.");
 	RegAdminCmd("sm_match", CMD_Match, ADMFLAG_GENERIC, "Sets match mode.");
 	
 	LoadTranslations("modes.phrases");
+	
+	
 	
 }
 
@@ -90,12 +97,23 @@ public Action CMD_Match(int client, int args) {
 	return Plugin_Handled;
 }
 
-bool IsValidMap() {
+stock bool IsValidMap() {
 	
 	char map[32]; GetCurrentMap(map, sizeof(map));
 	if (StrContains(map, "mge_", false) != -1 || StrContains(map, "ultiduo_", false) != -1)
 		return false;
 	
 	return true;
+	
+}
+
+stock bool DoConfigsExist() {
+	
+	return (FileExists("cfg/Modes/Mix_normal.cfg", true) &&
+	FileExists("cfg/Modes/Mix_novatos.cfg", true) && 
+	FileExists("cfg/Modes/Fake.cfg", true) &&
+	FileExists("cfg/Modes/Fake_novatos.cfg") &&
+	FileExists("cfg/Modes/Treino.cfg") &&
+	FileExists("cfg/Modes/Match.cfg"))
 	
 }
