@@ -3,6 +3,7 @@
 #include <sourcemod>
 #include <SteamWorks>
 #include <morecolors>
+#include <autoexecconfig>
 
 enum GameType {
 	Mix, 
@@ -12,35 +13,34 @@ enum GameType {
 public Plugin myinfo = 
 {
 	name = "Discord Mix Announcer", 
-	author = "Bara - ampere", 
+	author = "ampere", 
 	description = "Discord in-game announcement plugin.", 
-	version = "4.0", 
-	url = "github.com/Bara - legacyhub.xyz"
+	version = "5.0", 
+	url = "legacyhub.xyz"
 };
 
 bool g_permitir = true;
-Handle discordmix_role1 = INVALID_HANDLE;
-Handle discordmix_role2 = INVALID_HANDLE;
-Handle discordmix_webhook1 = INVALID_HANDLE;
-Handle discordmix_webhook2 = INVALID_HANDLE;
 
-Regex regWebhook;
-Regex regRole;
+ConVar discordmix_role1;
+ConVar discordmix_role2;
+ConVar discordmix_webhook1;
+ConVar discordmix_webhook2;
 
-public void OnPluginStart()
-{
+public void OnPluginStart() {
+	
+	AutoExecConfig_SetCreateFile(true);
+	AutoExecConfig_SetFile("DiscordMix");
+	
 	RegAdminCmd("sm_anunciar", CMD_Anuncio, ADMFLAG_GENERIC, "Discord announcement");
 	LoadTranslations("discordmix.phrases");
 	
-	regWebhook = CompileRegex("discordapp.com\\/api\\/webhooks\\/([^\\/]+)\\/([^\\/]+)");
-	regRole = CompileRegex("<@&[0-9]+?>");
+	discordmix_role1 = AutoExecConfig_CreateConVar("sm_discordmix_role1", "", "First role that will be pinged in one of the announcements.", FCVAR_PROTECTED);
+	discordmix_role2 = AutoExecConfig_CreateConVar("sm_discordmix_role2", "", "Second role that will be pinged in one of the announcements.", FCVAR_PROTECTED);
+	discordmix_webhook1 = AutoExecConfig_CreateConVar("sm_discordmix_webhook1", "", "Link to the Nº1 Discord Webhook.", FCVAR_PROTECTED);
+	discordmix_webhook2 = AutoExecConfig_CreateConVar("sm_discordmix_webhook2", "", "Link to the Nº2 Discord Webhook.", FCVAR_PROTECTED);
 	
-	discordmix_role1 = CreateConVar("discordmix_role1", "", "First role that will be pinged in one of the announcements.", FCVAR_PROTECTED);
-	discordmix_role2 = CreateConVar("discordmix_role2", "", "Second role that will be pinged in one of the announcements.", FCVAR_PROTECTED);
-	discordmix_webhook1 = CreateConVar("discordmix_webhook1", "", "Link to the Nº1 Discord Webhook.", FCVAR_PROTECTED);
-	discordmix_webhook2 = CreateConVar("discordmix_webhook2", "", "Link to the Nº2 Discord Webhook.", FCVAR_PROTECTED);
-	
-	AutoExecConfig(true, "DiscordMix");
+	AutoExecConfig_ExecuteFile();
+	AutoExecConfig_CleanFile();
 }
 
 // construcción de la hora
@@ -55,8 +55,7 @@ char GetGmtDate()
 	return GMTTime;
 }
 
-public Action CMD_Anuncio(int client, int args)
-{
+public Action CMD_Anuncio(int client, int args) {
 	
 	// checkea si el mix ya fue anunciado hace poco tiempo, si es así, rebota
 	
@@ -81,7 +80,7 @@ public Action CMD_Anuncio(int client, int args)
 	
 	char sMessage[512];
 	
-	int playerCount = GetClientCount(false);
+	int playerCount = GetRealPlayers();
 	char serverIp[32];
 	char serverPort[32];
 	char serverPassword[32];
@@ -101,8 +100,7 @@ public Action CMD_Anuncio(int client, int args)
 	
 	char sarg[32];
 	GetCmdArgString(sarg, sizeof(sarg));
-	if ((strlen(sarg) < 1) || !CheckType(gameType))
-	{
+	if ((strlen(sarg) < 1) || !CheckType(gameType)) {
 		CPrintToChat(client, "%t", "usage");
 		return Plugin_Handled;
 	}
@@ -114,8 +112,7 @@ public Action CMD_Anuncio(int client, int args)
 	int msgArg = 2;
 	bool isNovatos = false;
 	
-	if (GetCmdArgs() >= 2)
-	{
+	if (GetCmdArgs() >= 2) {
 		char arg2[32];
 		GetCmdArg(2, arg2, sizeof(arg2));
 		
@@ -124,12 +121,11 @@ public Action CMD_Anuncio(int client, int args)
 			msgArg = 3;
 	}
 	
-	// loop para el nensaje custom
+	// loop para el mensaje custom
 	
 	char cusMes[512];
 	
-	for (int i = msgArg; i <= GetCmdArgs(); i++)
-	{
+	for (int i = msgArg; i <= GetCmdArgs(); i++) {
 		char cusBuf[220];
 		GetCmdArg(i, cusBuf, sizeof(cusBuf));
 		Format(cusBuf, sizeof(cusBuf), "%s ", cusBuf);
@@ -137,7 +133,7 @@ public Action CMD_Anuncio(int client, int args)
 		StrCat(cusMes, sizeof(cusMes), cusBuf);
 	}
 	
-	if(StrEqual(cusMes, "", false)){
+	if(StrEqual(cusMes, "", false)) {
 		Format(cusMes, sizeof(cusMes), "%t", "noCusMes");
 	}
 	
@@ -145,7 +141,7 @@ public Action CMD_Anuncio(int client, int args)
 	
 	char role1[32];
 	GetConVarString(discordmix_role1, role1, sizeof(role1));
-	if (!MatchRegex(regRole, role1)){
+	if (SimpleRegexMatch(role1, "<@&[0-9]+?>") == 0) {
 		LogError("%t", "roleEmpty");
 		CPrintToChat(client, "%t", "roleEmptyChat");
 		return Plugin_Handled;
@@ -166,7 +162,7 @@ public Action CMD_Anuncio(int client, int args)
 		// sólo si se llega a usar lo de novatos, se hace crucial frenar el plugin si el 2do rol es incorrecto
 		
 		char role2[32]; GetConVarString(discordmix_role2, role2, sizeof(role2));
-		if (!MatchRegex(regRole, role2)){
+		if (SimpleRegexMatch(role2, "<@&[0-9]+?>") == 0) {
 			LogError("%t", "roleEmpty");
 			return Plugin_Handled;
 		}
@@ -217,37 +213,32 @@ public Action permAnuncio(Handle timer, client) {
 	g_permitir = true;
 }
 
-public void SendToDiscord(const char[] channel, const char[] message, bool novato)
-{
+public void SendToDiscord(const char[] channel, const char[] message, bool novato) {
 	char sURL[512];
 	
 	GetConVarString(discordmix_webhook1, sURL, sizeof(sURL));
 	if (novato)
 		GetConVarString(discordmix_webhook2, sURL, sizeof(sURL));
 	
-	if (!MatchRegex(regWebhook, sURL))
-	{
+	if (SimpleRegexMatch(sURL, "discordapp.com\\/api\\/webhooks\\/([^\\/]+)\\/([^\\/]+)") == 0)
 		LogError("%t", "webhookEmpty");
-	}
 	
 	Handle request = SteamWorks_CreateHTTPRequest(k_EHTTPMethodPOST, sURL);
 	
 	SteamWorks_SetHTTPRequestGetOrPostParameter(request, "content", message);
 	SteamWorks_SetHTTPRequestHeaderValue(request, "Content-Type", "application/x-www-form-urlencoded");
 	
-	if (request == null || !SteamWorks_SetHTTPCallbacks(request, Callback_SendToDiscord) || !SteamWorks_SendHTTPRequest(request))
-	{
+	if (request == null || !SteamWorks_SetHTTPCallbacks(request, Callback_SendToDiscord) || !SteamWorks_SendHTTPRequest(request)) {
 		PrintToServer("Error en el envío del mensaje a Discord.");
 		delete request;
 	}
 }
 
-public Callback_SendToDiscord(Handle hRequest, bool bFailure, bool bRequestSuccessful, EHTTPStatusCode eStatusCode)
-{
-	if (!bFailure && bRequestSuccessful)
-	{
-		if (eStatusCode != k_EHTTPStatusCode200OK && eStatusCode != k_EHTTPStatusCode204NoContent)
-		{
+public Callback_SendToDiscord(Handle hRequest, bool bFailure, bool bRequestSuccessful, EHTTPStatusCode eStatusCode) {
+	if (!bFailure && bRequestSuccessful) {
+		
+		if (eStatusCode != k_EHTTPStatusCode200OK && eStatusCode != k_EHTTPStatusCode204NoContent) {
+			
 			LogError("Error en callback. Código [%i].", eStatusCode);
 			SteamWorks_GetHTTPResponseBodyCallback(hRequest, Callback_Response);
 		}
@@ -255,7 +246,6 @@ public Callback_SendToDiscord(Handle hRequest, bool bFailure, bool bRequestSucce
 	delete hRequest;
 }
 
-public Callback_Response(const char[] sData)
-{
+public Callback_Response(const char[] sData) {
 	PrintToServer("Respuesta de callback [%s]", sData);
 } 

@@ -1,13 +1,7 @@
 #pragma semicolon 1
 
-#define DEBUG
-
 #include <sourcemod>
-#include <sdktools>
-#include <tf2>
-#include <tf2_stocks>
 #include <morecolors>
-//#include <sdkhooks>
 
 public Plugin myinfo = 
 {
@@ -27,11 +21,19 @@ public void OnPluginStart()
 
 public Action CMD_PlayerCount(int client, int args)
 {
+	
+	if (GetPlayers() == 1) {
+		
+		CReplyToCommand(client, "%t", "player", GetPlayers());
+		return Plugin_Handled;
+		
+	}
+	
 	CReplyToCommand(client, "%t", "players", GetPlayers());
 	return Plugin_Handled;
 }
 
-stock int GetPlayers() {
+int GetPlayers() {
 	int players = 0;
 	for (int i = 1; i <= MaxClients; ++i) {
 		
@@ -39,4 +41,4 @@ stock int GetPlayers() {
 			players++;
 	}
 	return players;
-} 
+}

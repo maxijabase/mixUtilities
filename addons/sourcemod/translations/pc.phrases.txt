@@ -9,4 +9,12 @@
 		"pt""{green}[PC]{default} Há {orange}{1}{default} jogadores no servidor."
 	}
 	
+	"player"
+	{
+		"#format""{1:i}"
+		"es""{green}[PC]{default} Hay {orange}{1}{default} jugador en el servidor."
+		"en""{green}[PC]{default} There are {orange}{1}{default} player in the server."
+		"pt""{green}[PC]{default} Há {orange}{1}{default} jogador no servidor."
+	}
+	
 } 
