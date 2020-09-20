@@ -1,4 +1,5 @@
 #include <sourcemod>
+
 #include <regex>
 
 #pragma semicolon 1
@@ -8,6 +9,7 @@
 
 ConVar g_cvMap, g_cvEnabled, g_cvTime;
 Regex g_rTime;
+Timer g_Timer1, g_Timer2;
 
 public Plugin myinfo =  {
 	name = "Mix Utilities - Auto Map", 
@@ -41,23 +43,20 @@ public void OnMapStart() {
 	if (!IsValidTime())
 		SetFailState("[AutoMap] Invalid time!");
 	
-	CreateTimer(float(g_cvTime.IntValue), doChangeMap, _, TIMER_REPEAT);
+	g_Timer1 = CreateTimer(30.0, CheckPlayers, _, TIMER_REPEAT);
 }
 
-public Action doChangeMap(Handle timer) {
-	if (GetClientCount(false) == 0)
-		if (!IsCurrMapEqualToSetMap()) {
-		ChangeMap(timer);
-		return Plugin_Handled;
-	}
-	
+void CheckPlayers(Handle g_Timer1) {
+
 	if (GetClientCount(false) == 1)
-		if (!IsCurrMapEqualToSetMap())
 		if (IsSourceTV()) {
-		ChangeMap(timer);
-		return Plugin_Handled;
+		g_Timer2 = CreateTimer(30.0, ChangeMap);
 	}
-	return Plugin_Handled;
+
+}
+
+public void OnClientAuthorized() {
+	g_Timer2.Close();
 }
 
 stock bool IsSourceTV() {
@@ -93,7 +92,7 @@ stock bool IsValidTime() {
 	char time[PLATFORM_MAX_PATH];
 	g_cvTime.GetString(time, sizeof(time));
 	
-	return (MatchRegex(g_rTime, time));
+	return (MatchRegex(g_rTime, time) == 0);
 }
 
 void ChangeMap(Handle timer) {

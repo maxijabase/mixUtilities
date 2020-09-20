@@ -80,7 +80,7 @@ public Action CMD_Anuncio(int client, int args) {
 	
 	char sMessage[512];
 	
-	int playerCount = GetRealPlayers();
+	int playerCount = GetClientCount() - 1;
 	char serverIp[32];
 	char serverPort[32];
 	char serverPassword[32];
@@ -90,6 +90,8 @@ public Action CMD_Anuncio(int client, int args) {
 	cvar = FindConVar("hostport");
 	GetConVarString(cvar, serverPort, sizeof(serverPort));
 	GetConVarString(FindConVar("sv_password"), serverPassword, sizeof(serverPassword));
+	char clName[MAX_NAME_LENGTH];
+	GetClientName(client, clName, sizeof(clName));
 	
 	// se almacena en la variable "type" el argumento del comando, que permite determinar configuraciones para MIX o FAKE
 	
@@ -179,7 +181,7 @@ public Action CMD_Anuncio(int client, int args) {
 	
 	// formateo final
 	
-	Format(sMessage, sizeof(sMessage), "%s\n%s\n _%s_\n:black_small_square: ``connect %s:%s; password %s``\n:black_small_square: steam://connect/%s:%s/%s\n:map: **%s** | :busts_in_silhouette: **%d/%d** | :clock3: **%s**", roleMsg, annMsg, cusMes, serverIp, serverPort, serverPassword, serverIp, serverPort, serverPassword, mapName, playerCount, MaxClients, GetGmtDate());
+	Format(sMessage, sizeof(sMessage), "%s\n%s\n _%s_\n:black_small_square: ``connect %s:%s; password %s``\n:black_small_square: steam://connect/%s:%s/%s\n:map: **%s** | :busts_in_silhouette: **%d/%d** | :clock3: **%s** | :speaking_head: **%s**", roleMsg, annMsg, cusMes, serverIp, serverPort, serverPassword, serverIp, serverPort, serverPassword, mapName, playerCount, MaxClients, GetGmtDate(), clName);
 	
 	// se bloquea temporalmente la repetición del comando, y comienza un timer que lo reactiva en 10 minutos
 	
