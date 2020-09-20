@@ -15,9 +15,9 @@ ConVar cvMode;
 public void OnPluginStart() {
 	
 	if (!DoConfigsExist())
-		SetFailState("[AutoCFG] Files error. Please check the configs properly. Plugin disabled.")
+		SetFailState("[Modes] Files error. Please check the configs properly. Plugin disabled.")
 	
-	PrintToServer("[AutoCFG] Plugin loaded successfully!")
+	PrintToServer("[Modes] Plugin loaded successfully!")
 	
 	RegAdminCmd("sm_fake", CMD_Fake, ADMFLAG_GENERIC, "Sets fake mode.");
 	RegAdminCmd("sm_treino", CMD_Treino, ADMFLAG_GENERIC, "Sets treino mode.");
