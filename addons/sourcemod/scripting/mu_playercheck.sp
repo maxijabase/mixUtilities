@@ -24,12 +24,12 @@ public Action CMD_PlayerCount(int client, int args)
 	
 	if (GetPlayers() == 1) {
 		
-		CReplyToCommand(client, "%t", "player", GetPlayers());
+		MC_ReplyToCommand(client, "%t", "player", GetPlayers());
 		return Plugin_Handled;
 		
 	}
 	
-	CReplyToCommand(client, "%t", "players", GetPlayers());
+	MC_ReplyToCommand(client, "%t", "players", GetPlayers());
 	return Plugin_Handled;
 }
 

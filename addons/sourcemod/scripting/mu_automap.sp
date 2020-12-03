@@ -9,7 +9,7 @@
 
 ConVar g_cvMap, g_cvEnabled, g_cvTime;
 Regex g_rTime;
-Timer g_Timer1, g_Timer2;
+Handle g_Timer2;
 
 public Plugin myinfo =  {
 	name = "Mix Utilities - Auto Map", 
@@ -43,10 +43,10 @@ public void OnMapStart() {
 	if (!IsValidTime())
 		SetFailState("[AutoMap] Invalid time!");
 	
-	g_Timer1 = CreateTimer(30.0, CheckPlayers, _, TIMER_REPEAT);
+	CreateTimer(30.0, CheckPlayers, _, TIMER_REPEAT);
 }
 
-void CheckPlayers(Handle g_Timer1) {
+public Action CheckPlayers(Handle timer) {
 
 	if (GetClientCount(false) == 1)
 		if (IsSourceTV()) {
@@ -56,7 +56,7 @@ void CheckPlayers(Handle g_Timer1) {
 }
 
 public void OnClientAuthorized() {
-	g_Timer2.Close();
+	delete g_Timer2;
 }
 
 stock bool IsSourceTV() {
@@ -95,7 +95,7 @@ stock bool IsValidTime() {
 	return (MatchRegex(g_rTime, time) == 0);
 }
 
-void ChangeMap(Handle timer) {
+public Action ChangeMap(Handle timer) {
 	char sMap[PLATFORM_MAX_PATH];
 	g_cvMap.GetString(sMap, sizeof(sMap));
 	KillTimer(timer);

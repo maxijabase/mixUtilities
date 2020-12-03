@@ -61,7 +61,7 @@ public Action CMD_Anuncio(int client, int args) {
 	
 	if (!g_permitir) {
 		
-		CPrintToChat(client, "%t", "alreadyAnnounced");
+		MC_PrintToChat(client, "%t", "alreadyAnnounced");
 		return Plugin_Handled;
 	}
 	
@@ -72,7 +72,7 @@ public Action CMD_Anuncio(int client, int args) {
 	
 	if ((StrContains(mapName, "cp_") == -1) && ((StrContains(mapName, "koth_")) == -1)) {
 		
-		CPrintToChat(client, "%t", "notMixMap");
+		MC_PrintToChat(client, "%t", "notMixMap");
 		return Plugin_Handled;
 	}
 	
@@ -103,7 +103,7 @@ public Action CMD_Anuncio(int client, int args) {
 	char sarg[32];
 	GetCmdArgString(sarg, sizeof(sarg));
 	if ((strlen(sarg) < 1) || !CheckType(gameType)) {
-		CPrintToChat(client, "%t", "usage");
+		MC_PrintToChat(client, "%t", "usage");
 		return Plugin_Handled;
 	}
 	
@@ -145,7 +145,7 @@ public Action CMD_Anuncio(int client, int args) {
 	GetConVarString(discordmix_role1, role1, sizeof(role1));
 	if (SimpleRegexMatch(role1, "<@&[0-9]+?>") == 0) {
 		LogError("%t", "roleEmpty");
-		CPrintToChat(client, "%t", "roleEmptyChat");
+		MC_PrintToChat(client, "%t", "roleEmptyChat");
 		return Plugin_Handled;
 	}
 	
@@ -195,7 +195,7 @@ public Action CMD_Anuncio(int client, int args) {
 	
 	// confirmacion en chat a quien ejecutó el comando
 	
-	CPrintToChat(client, "%t", "announcedSuccessfully", gameType);
+	MC_PrintToChat(client, "%t", "announcedSuccessfully", gameType);
 	
 	return Plugin_Continue;
 }
