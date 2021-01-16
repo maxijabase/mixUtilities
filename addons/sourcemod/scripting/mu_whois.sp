@@ -13,7 +13,7 @@ public Plugin myinfo =  {
 	name = "Mix Utilities - Whois", 
 	author = "Sidezz", 
 	description = "Fetches actual name of aliasing players.", 
-	version = "1.0", 
+	version = "1.1", 
 	url = "www.coldcommunity.com"
 	
 }
@@ -52,6 +52,7 @@ public void CreateTable() {
 	StrCat(sQuery, sizeof(sQuery), "steam_id VARCHAR(64), ");
 	StrCat(sQuery, sizeof(sQuery), "name VARCHAR(128), ");
 	StrCat(sQuery, sizeof(sQuery), "date DATE, ");
+	StrCat(sQuery, sizeof(sQuery), "ip VARCHAR(32), ");
 	StrCat(sQuery, sizeof(sQuery), "PRIMARY KEY(entry)");
 	StrCat(sQuery, sizeof(sQuery), ");");
 	g_Database.Query(SQL_GenericQuery, sQuery);
@@ -283,6 +284,7 @@ public void SQL_SelectPermName(Database db, DBResultSet results, const char[] er
 	if (!results.FetchRow()) {
 		
 		MC_PrintToChat(client, "%t", "noName", target);
+		ShowActivityMenu(client, target);
 		return;
 		
 	}
@@ -339,7 +341,7 @@ public int Handler_ActivityList(Menu hMenu, MenuAction action, int client, int s
 	
 }
 
-public void OnClientAuthorized(int client) {
+public void OnClientPostAdminCheck(int client) {
 	
 	InsertPlayerData(client);
 	
@@ -367,14 +369,25 @@ void InsertPlayerData(int client) {
 		
 	}
 	
-	char steamid[32], name[MAX_NAME_LENGTH], safeName[129];
-	GetClientAuthId(client, AuthId_Steam2, steamid, sizeof(steamid));
-	GetClientName(client, name, sizeof(name));
+	char steamid[32], name[MAX_NAME_LENGTH], safeName[129], ip[16];
+	
+	if (!GetClientAuthId(client, AuthId_Steam2, steamid, sizeof(steamid))) {
+		LogError("[WhoIs] Error while fetching AuthID for %N", client);
+	}
+	if (!GetClientName(client, name, sizeof(name))) {
+		LogError("[WhoIs] Error while fetching Name for %N", client);
+	}
+	if (!GetClientIP(client, ip, sizeof(ip))) {
+		LogError("[WhoIs] Error while fetching IP for %N", client);
+	}
 	
 	g_Database.Escape(name, safeName, sizeof(safeName));
 	
-	char query[256];
-	Format(query, sizeof(query), "INSERT INTO whois_names (steam_id, name, date) VALUES ('%s', '%s', NOW());", steamid, safeName);
+	char query[1024];
+	Format(query, sizeof(query), "INSERT INTO whois_names (steam_id, NAME, date, ip) " ...
+								 "SELECT * FROM (SELECT '%s', '%s', NOW(), '%s') AS tmp " ... 
+								 "WHERE NOT EXISTS " ...
+								 "(SELECT * FROM whois_names WHERE NAME = '%s' AND ip = '%s' AND steam_id = '%s') LIMIT 1", steamid, safeName, ip, safeName, ip, steamid);
 	
 	g_Database.Query(SQL_GenericQuery, query);
 	
